@@ -1,5 +1,7 @@
-from django.core.management.base import BaseCommand
-from app.models import Subject
+from argparse import ArgumentParser
+from django.core.management.base import BaseCommand, CommandError
+from app.models import UniversityUser
+from app.util.table import ViewTable
 
 
 class Command(BaseCommand):

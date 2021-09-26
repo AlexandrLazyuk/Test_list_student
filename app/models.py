@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Subject(models.Model):
+    objects = None
     name = models.CharField(max_length=100)
     description = models.TextField()
 

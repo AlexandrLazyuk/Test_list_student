@@ -1,6 +1,7 @@
-from django.core.management.base import BaseCommand
-from app.models import UserGroup
-
+from argparse import ArgumentParser
+from django.core.management.base import BaseCommand, CommandError
+from app.models import UniversityUser
+from app.util.table import ViewTable
 
 class Command(BaseCommand):
     help = 'CRUD user'
