@@ -21,7 +21,7 @@ class Students:
             raise UniversityUser.DoesNotExist(f'User {self.id} does not exist')
 
     @staticmethod
-    def update_student(fields: dict, model: UniversityUser):
+    def update(fields: dict, model: UniversityUser):
         if fields['username']:
             model.username = fields['username']
         if fields['first_name']:
