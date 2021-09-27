@@ -37,14 +37,7 @@ class Command(BaseCommand):
                     raise CommandError(f'User {student_id} was delete')
                 if options['update']:
                     fields = json.loads(options['update'])
-                    if fields['username']:
-                        student.username = fields['username']
-                    if fields['first_name']:
-                        student.first_name = fields['first_name']
-                    if fields['last_name']:
-                        student.last_name = fields['last_name']
-                    if fields:
-                        student.save()
+                    repository.update_student(fields=fields, model=student)
                     return self.stdout.write(self.style.SUCCESS(f'User {student.first_name} was update'))
                 table = ViewTable(
                     c_cells=self.CELLS,
