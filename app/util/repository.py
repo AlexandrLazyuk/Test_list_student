@@ -20,7 +20,8 @@ class Students:
         except UniversityUser.DoesNotExist:
             raise UniversityUser.DoesNotExist(f'User {self.id} does not exist')
 
-    def update_student(self, fields: dict, model: UniversityUser):
+    @staticmethod
+    def update_student(fields: dict, model: UniversityUser):
         if fields['username']:
             model.username = fields['username']
         if fields['first_name']:
@@ -29,4 +30,5 @@ class Students:
             model.last_name = fields['last_name']
         if fields:
             model.save()
+
 
