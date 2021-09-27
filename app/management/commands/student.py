@@ -52,5 +52,5 @@ class Command(BaseCommand):
                 )
                 self.stdout.write(self.style.HTTP_NOT_MODIFIED(table.draw()))
 
-        except UniversityUser.DoesNotExist:
-            raise CommandError(f'User {student_id} does not exist')
+        except UniversityUser.DoesNotExist as e:
+            raise CommandError(e)
