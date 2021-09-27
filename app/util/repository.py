@@ -6,7 +6,7 @@ class Students:
     TYPE = 'student'
 
     def __init__(self, **kwargs):
-        self.id = kwargs.get('id', 0)
+        self.id = kwargs.get('id', self.id)
 
     def get_all_students(self):
         students = UniversityUser.objects.filter(role_type=self.TYPE).order_by('-id')
