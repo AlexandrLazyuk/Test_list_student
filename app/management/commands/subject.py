@@ -2,27 +2,28 @@ from argparse import ArgumentParser
 from django.core.management.base import BaseCommand, CommandError
 from app.models import Subject
 from app.util.table import ViewTable
+from app.util.repository import Subjects
 import json
 
 
 class Command(BaseCommand):
-    CELLS = ['objects', 'name', 'description']
-    help = 'CRUD subjects'
+    CELLS = ['Id', 'name']
+    help = 'CRUD subject'
 
     def add_arguments(self, parser: ArgumentParser):
-        parser.add_argument('-s', '--id', type=int, help='Get subject by objects', nargs='?', const=1)
         parser.add_argument('-a', '--all', action='store_true', help='Show all subjects')
-        parser.add_argument('-d', '--delete', action='store_true', help='Delete subject by objects')
+        parser.add_argument('-s', '--id', type=int, help='Get subject by id', nargs='?', const=1)
+        parser.add_argument('-d', '--delete', action='store_true', help='Delete subject by id')
         parser.add_argument('-u', '--update', type=str, help='Update subject by id')
 
     def handle(self, *args, **options):
         subject_id = options['id']
+        repository = Subjects(id=subject_id)
         try:
             if options['all']:
                 rows = []
-                subjects = Subject.objects.filter(role_type='subject')
-                for subject in subjects:
-                    fields = [subject.objects, subject.name, subject.description]
+                for subject in repository.get_all_subjects():
+                    fields = [subject.id, subject.last_name, subject.name]
                     rows.append(fields)
                 table = ViewTable(
                     c_cells=self.CELLS,
@@ -30,20 +31,19 @@ class Command(BaseCommand):
                 )
                 self.stdout.write(self.style.HTTP_NOT_MODIFIED(table.draw()))
             else:
-                subject = Subject.objects.get(id=subject_id,role_type='student')
+                subject = repository.get_subject_by_id()
                 if options['delete']:
                     subject.delete()
                     raise CommandError(f'Subject {subject_id} was delete')
-                if json.loads(options['update']):
-                    fields = options['update']
-                    subject.name = fields['subject']
-                    subject.save()
-                    return self.stdout.write(self.style.SUCCESS('User wos update'))
+                if options['update']:
+                    fields = json.loads(options['update'])
+                    repository.update(fields=fields, model=subject)
+                    return self.stdout.write(self.style.SUCCESS(f'Subject {subject.first_name} was update'))
                 table = ViewTable(
                     c_cells=self.CELLS,
-                    c_rows=[[subject.objects, subject.name, subject.description]]
+                    c_rows=[[subject.id, subject.last_name, subject.name]]
                 )
                 self.stdout.write(self.style.HTTP_NOT_MODIFIED(table.draw()))
 
-        except Subject.DoesNotExist:
-            raise CommandError(f'Subject {subject_id} does not exist')
+        except Subject.DoesNotExist as e:
+            raise CommandError(e)
